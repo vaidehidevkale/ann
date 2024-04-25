@@ -1,0 +1,60 @@
+import numpy as np
+
+class Perceptron:
+    def __init__(self, input_size, learning_rate=0.1):
+        self.weights = np.zeros(input_size)
+        self.bias = 0
+        self.learning_rate = learning_rate
+
+    def predict(self, inputs):
+        weighted_sum = np.dot(self.weights, inputs) + self.bias
+        if weighted_sum >= 0:
+            return 1
+        else:
+            return 0
+
+    def train(self, inputs, label):
+        prediction = self.predict(inputs)
+        error = label - prediction
+        self.weights += self.learning_rate * error * inputs
+        self.bias += self.learning_rate * error
+
+training_data = {
+    "48": 1, 
+    "49": 0, 
+    "50": 1, 
+    "51": 0, 
+    "52": 1, 
+    "53": 0, 
+    "54": 1, 
+    "55": 0, 
+    "56": 1, 
+    "57": 0, 
+}
+
+perceptron = Perceptron(input_size=7)
+
+for ascii_code, label in training_data.items():
+    inputs = np.array([int(b) for b in bin(int(ascii_code))[2:].zfill(7)])
+    perceptron.train(inputs, label)
+    
+test_data = {
+    "48": "even", 
+    "49": "odd", 
+    "50": "even", 
+    "51": "odd", 
+    "52": "even",
+    "53": "odd", 
+    "54": "even", 
+    "55": "odd", 
+    "56": "even", 
+    "57": "odd", 
+}
+
+for ascii_code, expected_output in test_data.items():
+    inputs = np.array([int(b) for b in bin(int(ascii_code))[2:].zfill(7)])
+    output = perceptron.predict(inputs)
+    if output == 1:
+        print(f"'{chr(int(ascii_code))}' is {expected_output}.")
+    else:
+        print(f"'{chr(int(ascii_code))}' is {expected_output}.")
