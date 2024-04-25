@@ -1,0 +1,19 @@
+def mcculloch_pitts(input1, input2):
+    # Define the weights and threshold
+    weights = [1, 1]
+    threshold = 1
+
+    # Compute the weighted sum
+    weighted_sum = input1 * weights[0] + input2 * weights[1]
+
+    # Apply the threshold function
+    if weighted_sum >= threshold:
+        return 1
+    else:
+        return 0
+
+# Test the function with different inputs
+print(mcculloch_pitts(0, 0))  
+print(mcculloch_pitts(1, 0))  
+print(mcculloch_pitts(0, 1))  
+print(mcculloch_pitts(1, 1))  
