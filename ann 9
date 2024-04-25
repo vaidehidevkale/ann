@@ -1,0 +1,52 @@
+import numpy as np
+
+class HopfieldNetwork:
+    def __init__(self, num_neurons):
+        self.num_neurons = num_neurons
+        self.weights = np.zeros((num_neurons, num_neurons))
+
+    def train(self, patterns):
+        for pattern in patterns:
+            pattern = pattern.reshape((1, self.num_neurons))
+            weight_update = np.dot(pattern.T, pattern)
+            np.fill_diagonal(weight_update, 0)  # Set diagonal elements to 0 to prevent self-connections
+            self.weights += weight_update
+
+    def recall(self, pattern, max_iterations=100):
+        pattern = pattern.reshape((1, self.num_neurons))
+        iterations = 0
+
+        while iterations < max_iterations:
+            output = np.sign(np.dot(pattern, self.weights))
+            if np.array_equal(pattern, output):
+                break
+            pattern = output
+            iterations += 1
+
+        return pattern
+
+# Example usage
+patterns = np.array([
+    [-1, 1, 1, 1],
+    [1, -1, 1, -1],
+    [-1, -1, 1, 1],
+    [-1, 1, -1, -1]
+])
+
+hopfield = HopfieldNetwork(num_neurons=4)
+hopfield.train(patterns)
+
+test_patterns = np.array([
+    [-1, 1, 1, 1],
+    [1, 1, -1, -1],
+    [1, -1, -1, -1]
+])
+
+print("Stored Patterns:")
+for i, pattern in enumerate(patterns):
+    print(f"Pattern {i + 1}: {pattern}")
+
+print("\nRecalled Patterns:")
+for pattern in test_patterns:
+    recalled_pattern = hopfield.recall(pattern)
+    print(f"Input Pattern: {pattern}, Recalled Pattern: {recalled_pattern.flatten()}")
