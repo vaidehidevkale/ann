@@ -1,0 +1,54 @@
+import numpy as np
+
+class ARTNetwork:
+    def __init__(self, num_input, rho, vigilance):
+        self.num_input = num_input
+        self.rho = rho
+        self.vigilance = vigilance
+        self.weights = np.zeros((num_input,))
+
+    def train(self, input_pattern):
+        while True:
+            output = self._classify(input_pattern)
+            if output is not None:
+                self._update_weights(input_pattern, output)
+                return output
+            self._adjust_weights(input_pattern)
+
+    def _classify(self, input_pattern):
+        input_norm = input_pattern / np.linalg.norm(input_pattern)
+        output = np.dot(self.weights, input_norm)
+        return output if output >= self.rho else None
+
+    def _update_weights(self, input_pattern, output):
+        self.weights += input_pattern
+
+    def _adjust_weights(self, input_pattern):
+        input_norm = input_pattern / np.linalg.norm(input_pattern)
+        self.weights = np.maximum(self.weights, input_norm)
+
+    def recall(self, input_pattern):
+        return self._classify(input_pattern)
+
+# Example usage
+num_input = 5
+rho = 0.5
+vigilance = 0.8
+
+network = ARTNetwork(num_input, rho, vigilance)
+
+# Training
+input_patterns = [
+    np.array([1, 0, 0, 0, 1]),
+    np.array([0, 1, 0, 0, 1]),
+    np.array([0, 0, 1, 0, 1]),
+]
+
+for pattern in input_patterns:
+    output = network.train(pattern)
+    print(f"Trained pattern {pattern} classified as {output}")
+
+# Recall
+input_pattern = np.array([1, 1, 0, 0, 1])
+output = network.recall(input_pattern)
+print(f"Recalled pattern {input_pattern} classified as {output}")
