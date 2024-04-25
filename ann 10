@@ -1,0 +1,15 @@
+!pip install tensorflow
+
+import tensorflow as tf
+model = tf.keras.applications.MobileNetV2(weights='imagenet')
+# Load image and preprocess it
+image = tf.keras.preprocessing.image.load_img('cat.jpeg', target_size=(224, 224))
+image = tf.keras.preprocessing.image.img_to_array(image)
+image = tf.keras.applications.mobilenet_v2.preprocess_input(image)
+image = tf.expand_dims(image, axis=0)
+# Run object detection
+predictions = model.predict(image)
+decoded_predictions = tf.keras.applications.mobilenet_v2.decode_predictions(predictions)
+# Print top predicted objects
+for _, label, confidence in decoded_predictions[0]:
+    print(f"{label}: {confidence * 100}%")
